@@ -6,6 +6,7 @@ const morgan = require("morgan");
 const fs = require("fs");
 const path = require("path");
 const authRoutes = require("./routes/authRoutes");
+const setupSwagger = require("./config/swaggerConfig");
 
 const app = express();
 
@@ -35,6 +36,9 @@ app.use(cors()); // Para permitir requisições de diferentes origens
 
 // Configurar rotas de autenticação
 app.use("/api/auth", authRoutes);
+
+// Configurar a documentação do Swagger
+setupSwagger(app);
 
 // Rota inicial para teste
 app.get("/", (req, res) => {
