@@ -2,11 +2,29 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/database");
-const authRoutes = require("./routes/authRoutes");  // Adicione esta linha
+const morgan = require("morgan");
+const fs = require("fs");
+const path = require("path");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
-console.log("🔍 Rotas carregadas:", authRoutes); // Adicione essa linha
+// Garantir que a pasta 'logs' exista
+const logDirectory = path.join(__dirname, "logs");
+if (!fs.existsSync(logDirectory)) {
+    fs.mkdirSync(logDirectory, { recursive: true });
+}
+
+// Criar um stream para salvar os logs em um arquivo
+const accessLogStream = fs.createWriteStream(path.join(logDirectory, "access.log"), { flags: "a" });
+
+// Middleware para registrar logs no arquivo
+app.use(morgan("combined", { stream: accessLogStream }));
+
+// Middleware para exibir logs no terminal (opcional)
+app.use(morgan("dev"));
+
+console.log("🔍 Rotas carregadas:", authRoutes); 
 
 // Conectar ao MongoDB
 connectDB();
@@ -14,7 +32,6 @@ connectDB();
 // Configurações básicas
 app.use(express.json()); // Para aceitar JSON no corpo das requisições
 app.use(cors()); // Para permitir requisições de diferentes origens
-
 
 // Configurar rotas de autenticação
 app.use("/api/auth", authRoutes);
