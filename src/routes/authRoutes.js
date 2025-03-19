@@ -1,5 +1,5 @@
 const express = require("express");
-const authController = require("../controllers/authController");
+const UserController = require("../controllers/userController");
 const authMiddleware = require("../middlewares/authMiddleware");
 
 const router = express.Router();
@@ -35,7 +35,7 @@ const router = express.Router();
  */
 
 // Rota para registro de usuário (sem autenticação necessária)
-router.post("/register", authController.register);
+router.post("/register", UserController.register);
 
 
 
@@ -66,7 +66,7 @@ router.post("/register", authController.register);
  */
 
 // Rota para login de usuário (sem autenticação necessária)
-router.post("/login", authController.login);
+router.post("/login", UserController.login);
 
 
 
