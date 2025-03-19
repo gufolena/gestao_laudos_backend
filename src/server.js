@@ -6,6 +6,7 @@ const morgan = require("morgan");
 const fs = require("fs");
 const path = require("path");
 const authRoutes = require("./routes/authRoutes");
+const caseRoutes = require("./routes/caseRoutes"); // Importando as rotas de Casos
 const setupSwagger = require("./config/swaggerConfig");
 
 const app = express();
@@ -36,6 +37,9 @@ app.use(cors()); // Para permitir requisições de diferentes origens
 
 // Configurar rotas de autenticação
 app.use("/api/auth", authRoutes);
+
+// Configurar rotas de Casos Periciais
+app.use("/api/cases", caseRoutes); 
 
 // Configurar a documentação do Swagger
 setupSwagger(app);
