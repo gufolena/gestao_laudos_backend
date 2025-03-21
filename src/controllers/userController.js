@@ -2,6 +2,12 @@ const User = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+// Função para lidar com erros
+const handleError = (res, error, message = "Erro interno do servidor") => {
+    console.error(message, error);
+    return res.status(500).json({ message });
+};
+
 const UserController = {
     // Registro de novo usuário
     async register(req, res) {
@@ -10,17 +16,11 @@ const UserController = {
 
             // Verifica se o e-mail já está cadastrado
             if (await User.findOne({ email })) {
-                return res.status(400).json({ message: "E-mail já cadastrado" });
+                return res.status(409).json({ message: "E-mail já cadastrado" });
             }
 
-            // Definição de roles permitidos
-            const validRoles = ["Admin", "Perito", "Assistente"];
-            if (!validRoles.includes(role)) {
-                return res.status(400).json({ message: "Role inválido. Escolha entre: Admin, Perito ou Assistente" });
-            }
-
-            // Criptografa a senha
-            const hashedPassword = await bcrypt.hash(senha, 10);
+            // Criptografa a senha com maior segurança
+            const hashedPassword = await bcrypt.hash(senha, 12);
 
             // Cria e salva o usuário
             const newUser = await User.create({
@@ -36,8 +36,7 @@ const UserController = {
             });
 
         } catch (error) {
-            console.error("Erro ao registrar usuário:", error);
-            return res.status(500).json({ message: "Erro ao registrar usuário", error: error.message });
+            return handleError(res, error, "Erro ao registrar usuário");
         }
     },
 
@@ -49,19 +48,26 @@ const UserController = {
             // Verifica se o usuário existe
             const user = await User.findOne({ email });
             if (!user) {
-                return res.status(400).json({ message: "E-mail ou senha incorretos" });
+                return res.status(401).json({ message: "E-mail ou senha incorretos" });
             }
 
             // Verifica se a senha está correta
-            if (!await bcrypt.compare(senha, user.senha)) {
-                return res.status(400).json({ message: "E-mail ou senha incorretos" });
+            const isPasswordValid = await bcrypt.compare(senha, user.senha);
+            if (!isPasswordValid) {
+                return res.status(401).json({ message: "E-mail ou senha incorretos" });
+            }
+
+            // Verifica se a chave JWT_SECRET está configurada
+            if (!process.env.JWT_SECRET) {
+                console.error("JWT_SECRET não definido.");
+                return res.status(500).json({ message: "Erro interno do servidor" });
             }
 
             // Gera um token JWT
             const token = jwt.sign(
                 { id: user._id, nome: user.nome, email: user.email, role: user.role },
                 process.env.JWT_SECRET,
-                { expiresIn: "2h" } // Tempo de expiração ajustado para 2 horas
+                { expiresIn: "3h" }
             );
 
             return res.status(200).json({ 
@@ -71,8 +77,7 @@ const UserController = {
             });
 
         } catch (error) {
-            console.error("Erro ao fazer login:", error);
-            return res.status(500).json({ message: "Erro ao fazer login", error: error.message });
+            return handleError(res, error, "Erro ao fazer login");
         }
     }
 };

@@ -1,6 +1,7 @@
 const express = require("express");
 const UserController = require("../controllers/userController");
 const authMiddleware = require("../middlewares/authMiddleware");
+const { body, validationResult } = require("express-validator");
 
 const router = express.Router();
 
@@ -35,9 +36,27 @@ const router = express.Router();
  */
 
 // Rota para registro de usuário (sem autenticação necessária)
-router.post("/register", UserController.register);
-
-
+router.post(
+    "/register",
+    [
+        body("nome").notEmpty().withMessage("Nome é obrigatório"),
+        body("email").isEmail().withMessage("E-mail inválido"),
+        body("senha")
+            .isLength({ min: 6 })
+            .withMessage("Senha deve ter pelo menos 6 caracteres"),
+        body("role")
+            .isIn(["Admin", "Perito", "Assistente"])
+            .withMessage("Role inválido"),
+    ],
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    },
+    UserController.register
+);
 
 /**
  * @swagger
@@ -66,21 +85,26 @@ router.post("/register", UserController.register);
  */
 
 // Rota para login de usuário (sem autenticação necessária)
-router.post("/login", UserController.login);
-
-
-
-
+router.post(
+    "/login",
+    [
+        body("email").isEmail().withMessage("E-mail inválido"),
+        body("senha").notEmpty().withMessage("Senha é obrigatória"),
+    ],
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    },
+    UserController.login
+);
 
 // Exemplo de rota protegida (requere autenticação)
 router.get("/perfil", authMiddleware, (req, res) => {
     // Rota de exemplo que retorna os dados do usuário autenticado
     res.json({ message: "Acesso autorizado", user: req.user });
 });
-
-
-
-
-
 
 module.exports = router;
