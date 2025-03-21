@@ -1,8 +1,18 @@
 const express = require("express");
 const CaseController = require("../controllers/caseController");
 const authMiddleware = require("../middlewares/authMiddleware");
+const { body, param, validationResult } = require("express-validator");
 
 const router = express.Router();
+
+// Middleware de validação
+const validateRequest = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  next();
+};
 
 /**
  * @swagger
@@ -26,10 +36,21 @@ const router = express.Router();
  *     responses:
  *       201:
  *         description: Caso criado com sucesso
+ *       400:
+ *         description: Dados inválidos
  *       500:
  *         description: Erro ao criar caso
  */
-router.post("/", authMiddleware, CaseController.createCase);
+router.post(
+  "/",
+  authMiddleware,
+  [
+    body("titulo").notEmpty().withMessage("Título é obrigatório"),
+    body("descricao").notEmpty().withMessage("Descrição é obrigatória"),
+  ],
+  validateRequest,
+  CaseController.createCase
+);
 
 /**
  * @swagger
@@ -67,7 +88,13 @@ router.get("/", authMiddleware, CaseController.getAllCases);
  *       404:
  *         description: Caso não encontrado
  */
-router.get("/:id", authMiddleware, CaseController.getCaseById);
+router.get(
+  "/:id",
+  authMiddleware,
+  param("id").isMongoId().withMessage("ID inválido"),
+  validateRequest,
+  CaseController.getCaseById
+);
 
 /**
  * @swagger
@@ -102,7 +129,18 @@ router.get("/:id", authMiddleware, CaseController.getCaseById);
  *       404:
  *         description: Caso não encontrado
  */
-router.put("/:id", authMiddleware, CaseController.updateCase);
+router.put(
+  "/:id",
+  authMiddleware,
+  [
+    param("id").isMongoId().withMessage("ID inválido"),
+    body("titulo").optional().notEmpty().withMessage("Título não pode ser vazio"),
+    body("descricao").optional().notEmpty().withMessage("Descrição não pode ser vazia"),
+    body("status").optional().isIn(["Aberto", "Em Análise", "Finalizado"]).withMessage("Status inválido"),
+  ],
+  validateRequest,
+  CaseController.updateCase
+);
 
 /**
  * @swagger
@@ -133,7 +171,16 @@ router.put("/:id", authMiddleware, CaseController.updateCase);
  *       404:
  *         description: Caso ou evidência não encontrados
  */
-router.post("/:id/evidence", authMiddleware, CaseController.addEvidenceToCase);
+router.post(
+  "/:id/evidence",
+  authMiddleware,
+  [
+    param("id").isMongoId().withMessage("ID inválido"),
+    body("evidenceId").isMongoId().withMessage("ID da evidência inválido"),
+  ],
+  validateRequest,
+  CaseController.addEvidenceToCase
+);
 
 /**
  * @swagger
@@ -155,6 +202,12 @@ router.post("/:id/evidence", authMiddleware, CaseController.addEvidenceToCase);
  *       404:
  *         description: Caso não encontrado
  */
-router.put("/:id/close", authMiddleware, CaseController.closeCase);
+router.put(
+  "/:id/close",
+  authMiddleware,
+  param("id").isMongoId().withMessage("ID inválido"),
+  validateRequest,
+  CaseController.closeCase
+);
 
 module.exports = router;

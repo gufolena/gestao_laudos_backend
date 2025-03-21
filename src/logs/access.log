@@ -60,3 +60,6 @@
 ::1 - - [21/Mar/2025:18:56:38 +0000] "POST /api/auth/login HTTP/1.1" 200 432 "-" "PostmanRuntime/7.43.2"
 ::1 - - [21/Mar/2025:18:56:45 +0000] "POST /api/cases HTTP/1.1" 201 298 "-" "PostmanRuntime/7.43.2"
 ::1 - - [21/Mar/2025:18:56:51 +0000] "GET /api/cases HTTP/1.1" 200 2948 "-" "PostmanRuntime/7.43.2"
+::1 - - [21/Mar/2025:20:08:16 +0000] "POST /api/cases HTTP/1.1" 400 95 "-" "PostmanRuntime/7.43.2"
+::1 - - [21/Mar/2025:20:09:07 +0000] "POST /api/cases HTTP/1.1" 400 102 "-" "PostmanRuntime/7.43.2"
+::1 - - [21/Mar/2025:20:09:16 +0000] "POST /api/cases HTTP/1.1" 201 298 "-" "PostmanRuntime/7.43.2"
