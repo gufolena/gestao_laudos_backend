@@ -17,7 +17,8 @@ const CaseController = {
             await newCase.save();
             return res.status(201).json({ message: "Caso criado com sucesso!", case: newCase });
         } catch (error) {
-            return res.status(500).json({ message: "Erro ao criar caso", error });
+            console.error("Erro ao criar caso:", error);
+            return res.status(500).json({ message: "Erro ao criar caso", error: error.message });
         }
     },
 
@@ -29,7 +30,8 @@ const CaseController = {
             const cases = await Case.find().populate("evidencias");
             return res.status(200).json(cases);
         } catch (error) {
-            return res.status(500).json({ message: "Erro ao buscar casos", error });
+            console.error("Erro ao buscar casos:", error);
+            return res.status(500).json({ message: "Erro ao buscar casos", error: error.message });
         }
     },
 
@@ -47,7 +49,8 @@ const CaseController = {
 
             return res.status(200).json(caseData);
         } catch (error) {
-            return res.status(500).json({ message: "Erro ao buscar caso", error });
+            console.error("Erro ao buscar caso:", error);
+            return res.status(500).json({ message: "Erro ao buscar caso", error: error.message });
         }
     },
 
@@ -71,7 +74,8 @@ const CaseController = {
 
             return res.status(200).json({ message: "Caso atualizado com sucesso!", case: updatedCase });
         } catch (error) {
-            return res.status(500).json({ message: "Erro ao atualizar caso", error });
+            console.error("Erro ao atualizar caso:", error);
+            return res.status(500).json({ message: "Erro ao atualizar caso", error: error.message });
         }
     },
 
@@ -91,9 +95,10 @@ const CaseController = {
             }
 
             await caseData.addEvidence(evidenceId);
-            return res.status(200).json({ message: "Evidência adicionada ao caso com sucesso!" });
+            return res.status(200).json({ message: "Evidência adicionada ao caso com sucesso!", case: caseData });
         } catch (error) {
-            return res.status(500).json({ message: "Erro ao adicionar evidência ao caso", error });
+            console.error("Erro ao adicionar evidência ao caso:", error);
+            return res.status(500).json({ message: "Erro ao adicionar evidência ao caso", error: error.message });
         }
     },
 
@@ -112,7 +117,8 @@ const CaseController = {
             await caseData.updateStatus("Finalizado");
             return res.status(200).json({ message: "Caso finalizado com sucesso!", case: caseData });
         } catch (error) {
-            return res.status(500).json({ message: "Erro ao finalizar caso", error });
+            console.error("Erro ao finalizar caso:", error);
+            return res.status(500).json({ message: "Erro ao finalizar caso", error: error.message });
         }
     }
 };
