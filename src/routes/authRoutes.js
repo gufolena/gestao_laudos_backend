@@ -7,8 +7,17 @@ const router = express.Router();
 
 /**
  * @swagger
+ * tags:
+ *   - name: Autenticação
+ *     description: Operações de autenticação, como login e registro de usuário
+ */
+
+/**
+ * @swagger
  * /api/auth/register:
  *   post:
+ *     tags:
+ *       - Autenticação
  *     summary: Registra um novo usuário
  *     description: Esta rota permite que um novo usuário se registre no sistema fornecendo nome, email, senha e role.
  *     requestBody:
@@ -62,6 +71,8 @@ router.post(
  * @swagger
  * /api/auth/login:
  *   post:
+ *     tags:
+ *       - Autenticação
  *     summary: Realiza login do usuário
  *     description: Esta rota realiza o login de um usuário e retorna um token JWT.
  *     requestBody:
@@ -100,6 +111,23 @@ router.post(
     },
     UserController.login
 );
+
+/**
+ * @swagger
+ * /api/auth/perfil:
+ *   get:
+ *     tags:
+ *       - Autenticação
+ *     summary: Retorna os dados do usuário autenticado
+ *     description: Esta rota retorna os dados do usuário autenticado (requer autenticação).
+ *     responses:
+ *       200:
+ *         description: Acesso autorizado, dados do usuário retornados
+ *       401:
+ *         description: Não autorizado, token inválido ou expirado
+ *       500:
+ *         description: Erro no servidor
+ */
 
 // Exemplo de rota protegida (requere autenticação)
 router.get("/perfil", authMiddleware, (req, res) => {

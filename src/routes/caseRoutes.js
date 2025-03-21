@@ -16,8 +16,17 @@ const validateRequest = (req, res, next) => {
 
 /**
  * @swagger
+ * tags:
+ *   - name: Casos
+ *     description: Operações relacionadas a casos periciais
+ */
+
+/**
+ * @swagger
  * /api/cases:
  *   post:
+ *     tags:
+ *       - Casos
  *     summary: Cria um novo caso pericial
  *     description: Endpoint para cadastrar um novo caso no sistema.
  *     security:
@@ -56,6 +65,8 @@ router.post(
  * @swagger
  * /api/cases:
  *   get:
+ *     tags:
+ *       - Casos
  *     summary: Retorna todos os casos
  *     description: Retorna a lista de todos os casos cadastrados no sistema.
  *     security:
@@ -72,6 +83,8 @@ router.get("/", authMiddleware, CaseController.getAllCases);
  * @swagger
  * /api/cases/{id}:
  *   get:
+ *     tags:
+ *       - Casos
  *     summary: Retorna um caso pelo ID
  *     description: Busca e retorna um caso específico pelo ID.
  *     security:
@@ -100,6 +113,8 @@ router.get(
  * @swagger
  * /api/cases/{id}:
  *   put:
+ *     tags:
+ *       - Casos
  *     summary: Atualiza um caso existente
  *     description: Permite modificar um caso pericial.
  *     security:
@@ -146,6 +161,8 @@ router.put(
  * @swagger
  * /api/cases/{id}/evidence:
  *   post:
+ *     tags:
+ *       - Casos
  *     summary: Adiciona evidência a um caso
  *     description: Vincula uma evidência existente a um caso pericial.
  *     security:
@@ -186,6 +203,8 @@ router.post(
  * @swagger
  * /api/cases/{id}/close:
  *   put:
+ *     tags:
+ *       - Casos
  *     summary: Finaliza um caso pericial
  *     description: Atualiza o status de um caso para "Finalizado".
  *     security:
