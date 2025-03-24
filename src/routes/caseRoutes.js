@@ -134,16 +134,23 @@ router.get(
  *             properties:
  *               titulo:
  *                 type: string
+ *                 description: Título do caso
  *               descricao:
  *                 type: string
+ *                 description: Descrição detalhada do caso
  *               status:
  *                 type: string
+ *                 description: Status do caso
+ *                 enum: ["Aberto", "Em Análise", "Finalizado"]
  *     responses:
  *       200:
  *         description: Caso atualizado com sucesso
  *       404:
  *         description: Caso não encontrado
+ *       400:
+ *         description: Dados inválidos
  */
+
 router.put(
   "/:id",
   authMiddleware,

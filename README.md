@@ -61,6 +61,13 @@ A documentação interativa da API está disponível via Swagger. Acesse no segu
 
 
 
+Para criar um caso, os status permitidos são:
+- "Em andamento"
+- "Finalizado"
+- "Arquivado"
 
-
-
+http://localhost:5000/api/cases/{id}
+Parar atualizar o caso, os status permitidos são:
+- "Aberto" 
+- "Em Análise"
+- "Finalizado"

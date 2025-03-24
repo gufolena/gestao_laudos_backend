@@ -19,7 +19,10 @@ const router = express.Router();
  *     tags:
  *       - Autenticação
  *     summary: Registra um novo usuário
- *     description: Esta rota permite que um novo usuário se registre no sistema fornecendo nome, email, senha e role.
+ *     description: Registra um novo usuário no sistema fornecendo nome, email, senha e role. As roles permitidas são:
+ *       - **Admin**: Acesso completo ao sistema, incluindo gerenciamento de usuários.
+ *       - **Perito**: Responsável por cadastrar casos, analisar evidências e gerar laudos.
+ *       - **Assistente**: Auxilia na coleta e envio de evidências.
  *     requestBody:
  *       required: true
  *       content:
@@ -29,19 +32,24 @@ const router = express.Router();
  *             properties:
  *               nome:
  *                 type: string
+ *                 description: Nome completo do usuário.
  *               email:
  *                 type: string
+ *                 description: Endereço de e-mail válido.
  *               senha:
  *                 type: string
+ *                 description: Senha com no mínimo 6 caracteres.
  *               role:
  *                 type: string
+ *                 description: Papel do usuário no sistema.
+ *                 enum: ["Admin", "Perito", "Assistente"]
  *     responses:
  *       201:
- *         description: Usuário registrado com sucesso
+ *         description: Usuário registrado com sucesso.
  *       400:
- *         description: Erro ao registrar usuário, e-mail já cadastrado ou role inválido
+ *         description: Erro ao registrar usuário. Possíveis motivos incluem e-mail já cadastrado ou role inválido.
  *       500:
- *         description: Erro no servidor
+ *         description: Erro interno do servidor.
  */
 
 // Rota para registro de usuário (sem autenticação necessária)
