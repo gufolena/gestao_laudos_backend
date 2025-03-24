@@ -5,6 +5,7 @@ const { body, validationResult } = require("express-validator");
 
 const router = express.Router();
 
+
 /**
  * @swagger
  * tags:
@@ -19,7 +20,10 @@ const router = express.Router();
  *     tags:
  *       - Autenticação
  *     summary: Registra um novo usuário
- *     description: Registra um novo usuário no sistema fornecendo nome, email, senha e role. As roles permitidas são:
+ *     description: |
+ *       Registra um novo usuário no sistema fornecendo nome, email, senha e role. 
+ *       
+ *       **Roles permitidas:**
  *       - **Admin**: Acesso completo ao sistema, incluindo gerenciamento de usuários.
  *       - **Perito**: Responsável por cadastrar casos, analisar evidências e gerar laudos.
  *       - **Assistente**: Auxilia na coleta e envio de evidências.
