@@ -9,16 +9,16 @@ const router = express.Router();
 /**
  * @swagger
  * tags:
- *   - name: Autenticação
- *     description: Operações de autenticação, como login e registro de usuário
+ * - name: Usuários
+ * description: Operações relacionadas a usuários, incluindo autenticação (registro e login) e gerenciamento (listar, atualizar, deletar).
  */
 
 /**
  * @swagger
- * /api/auth/register:
+ * /api/user/register:
  *   post:
  *     tags:
- *       - Autenticação
+ *       - Usuários
  *     summary: Registra um novo usuário
  *     description: |
  *       Registra um novo usuário no sistema fornecendo nome, email, senha e role. 
@@ -81,10 +81,10 @@ router.post(
 
 /**
  * @swagger
- * /api/auth/login:
+ * /api/user/login:
  *   post:
  *     tags:
- *       - Autenticação
+ *       - Usuários
  *     summary: Realiza login do usuário
  *     description: Esta rota realiza o login de um usuário e retorna um token JWT.
  *     requestBody:
@@ -128,10 +128,10 @@ router.post(
 
 /**
  * @swagger
- * /api/users:
+ * /api/user/buscar:
  *   get:
  *     tags:
- *       - Autenticação
+ *       - Usuários
  *     summary: Retorna todos os usuários cadastrados
  *     description: |
  *       Obtém a lista de todos os usuários cadastrados no sistema.
@@ -167,15 +167,15 @@ router.post(
  *         description: Erro interno do servidor.
  */
 
-router.get("/", authMiddleware, UserController.getAllUsers);
+router.get("/buscar", authMiddleware, UserController.getAllUsers);
 
 
 /**
  * @swagger
- * /api/auth/{id}:
+ * /api/user/atualizar/{id}:
  *   put:
  *     tags:
- *       - Autenticação
+ *       - Usuários
  *     summary: Atualiza os dados do usuário autenticado
  *     description: >
  *       Permite que um usuário autenticado atualize seus próprios dados, como nome, e-mail e senha. 
@@ -221,7 +221,40 @@ router.get("/", authMiddleware, UserController.getAllUsers);
  *         description: Erro interno do servidor.
  */
 
-router.put("/:id", authMiddleware, UserController.updateUser);
+router.put("/atualizar/:id", authMiddleware, UserController.updateUser);
+
+
+
+/**
+ * @swagger
+ * /api/user/delete/{id}:
+ *   delete:
+ *     tags:
+ *       - Usuários
+ *     summary: Deleta um usuário
+ *     description: |
+ *       Permite que um **administrador** exclua um usuário do sistema. 
+ *       **Somente administradores podem excluir usuários.**
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID do usuário a ser excluído.
+ *     responses:
+ *       200:
+ *         description: Usuário excluído com sucesso.
+ *       403:
+ *         description: Acesso negado. Somente administradores podem excluir usuários.
+ *       404:
+ *         description: Usuário não encontrado.
+ *       500:
+ *         description: Erro interno do servidor.
+ */
+router.delete("/delete/:id", authMiddleware, UserController.deleteUser); 
 
 
 module.exports = router;

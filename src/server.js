@@ -5,8 +5,8 @@ const connectDB = require("./config/database");
 const morgan = require("morgan");
 const fs = require("fs");
 const path = require("path");
-const authRoutes = require("./routes/authRoutes");
-const caseRoutes = require("./routes/caseRoutes"); // Importando as rotas de Casos
+const userRoutes = require("./routes/userRoutes");
+const caseRoutes = require("./routes/caseRoutes"); 
 const setupSwagger = require("./config/swaggerConfig");
 
 const app = express();
@@ -26,7 +26,7 @@ app.use(morgan("combined", { stream: accessLogStream }));
 // Middleware para exibir logs no terminal (opcional)
 app.use(morgan("dev"));
 
-console.log("🔍 Rotas carregadas:", authRoutes); 
+console.log("🔍 Rotas carregadas:", userRoutes); 
 
 // Conectar ao MongoDB
 connectDB();
@@ -36,7 +36,7 @@ app.use(express.json()); // Para aceitar JSON no corpo das requisições
 app.use(cors()); // Para permitir requisições de diferentes origens
 
 // Configurar rotas de autenticação
-app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
 
 // Configurar rotas de Casos Periciais
 app.use("/api/cases", caseRoutes); 

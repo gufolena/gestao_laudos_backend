@@ -136,7 +136,34 @@ const UserController = {
         } catch (error) {
             return handleError(res, error, "Erro ao buscar usuários");
         }
+    },
+
+    // Deletar um usuário (Somente Admin pode excluir)
+    async deleteUser(req, res) {
+        try {
+            const { id } = req.params; // ID do usuário vindo da URL
+
+            // Verifica se o usuário autenticado é um Admin
+            if (req.user.role !== 'Admin') {
+                return res.status(403).json({ message: "Acesso negado. Somente administradores podem excluir usuários." });
+            }
+
+            // Busca o usuário no banco
+            const user = await User.findById(id);
+            if (!user) {
+                return res.status(404).json({ message: "Usuário não encontrado" });
+            }
+
+            // Deleta o usuário
+            await user.remove();
+
+            return res.status(200).json({ message: "Usuário excluído com sucesso!" });
+        } catch (error) {
+            return handleError(res, error, "Erro ao excluir usuário");
+        }
     }
+
+
 };
 
 module.exports = UserController;
