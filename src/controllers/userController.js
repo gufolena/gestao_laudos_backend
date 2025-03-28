@@ -126,6 +126,16 @@ const UserController = {
         } catch (error) {
             return handleError(res, error, "Erro ao atualizar usuário");
         }
+    },
+
+    // Listar todos os usuários
+    async getAllUsers(req, res) {
+        try {
+            const users = await User.find({}, "id nome email role");
+            return res.status(200).json(users);
+        } catch (error) {
+            return handleError(res, error, "Erro ao buscar usuários");
+        }
     }
 };
 

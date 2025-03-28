@@ -124,28 +124,50 @@ router.post(
     UserController.login
 );
 
+
+
 /**
  * @swagger
- * /api/auth/perfil:
+ * /api/users:
  *   get:
  *     tags:
  *       - Autenticação
- *     summary: Retorna os dados do usuário autenticado
- *     description: Esta rota retorna os dados do usuário autenticado (requer autenticação).
+ *     summary: Retorna todos os usuários cadastrados
+ *     description: |
+ *       Obtém a lista de todos os usuários cadastrados no sistema.
+ *       **Apenas administradores podem acessar esta rota.**
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: Acesso autorizado, dados do usuário retornados
- *       401:
- *         description: Não autorizado, token inválido ou expirado
+ *         description: Lista de usuários retornada com sucesso.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     description: ID do usuário.
+ *                   nome:
+ *                     type: string
+ *                     description: Nome do usuário.
+ *                   email:
+ *                     type: string
+ *                     description: Endereço de e-mail do usuário.
+ *                   role:
+ *                     type: string
+ *                     enum: ["Admin", "Perito", "Assistente"]
+ *                     description: Papel do usuário no sistema.
+ *       403:
+ *         description: Acesso negado. Apenas administradores podem visualizar todos os usuários.
  *       500:
- *         description: Erro no servidor
+ *         description: Erro interno do servidor.
  */
 
-// Exemplo de rota protegida (requere autenticação)
-router.get("/perfil", authMiddleware, (req, res) => {
-    // Rota de exemplo que retorna os dados do usuário autenticado
-    res.json({ message: "Acesso autorizado", user: req.user });
-});
+router.get("/", authMiddleware, UserController.getAllUsers);
 
 
 /**
