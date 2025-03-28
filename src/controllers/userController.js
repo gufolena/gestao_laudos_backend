@@ -79,6 +79,53 @@ const UserController = {
         } catch (error) {
             return handleError(res, error, "Erro ao fazer login");
         }
+    },
+
+    // Atualizar dados do usuário (nome, email, senha)
+    async updateUser(req, res) {
+        try {
+            const { id } = req.params; // ID do usuário vindo da URL
+            const { nome, email, senha } = req.body;
+
+            // Verifica se o usuário autenticado é o mesmo que está tentando atualizar os dados
+            if (req.user.id !== id) {
+                return res.status(403).json({ message: "Acesso negado. Você só pode alterar seus próprios dados." });
+            }
+
+            // Busca o usuário no banco
+            const user = await User.findById(id);
+            if (!user) {
+                return res.status(404).json({ message: "Usuário não encontrado" });
+            }
+
+            // Atualiza nome se foi enviado
+            if (nome) user.nome = nome;
+
+            // Atualiza email se foi enviado e verifica se já existe outro usuário com esse email
+            if (email && email !== user.email) {
+                const emailExists = await User.findOne({ email });
+                if (emailExists) {
+                    return res.status(409).json({ message: "Este e-mail já está em uso" });
+                }
+                user.email = email;
+            }
+
+            // Atualiza senha se foi enviada, criptografando antes de salvar
+            if (senha) {
+                user.senha = await bcrypt.hash(senha, 12);
+            }
+
+            // Salva as alterações
+            await user.save();
+
+            return res.status(200).json({ 
+                message: "Usuário atualizado com sucesso!", 
+                user: { id: user._id, nome: user.nome, email: user.email, role: user.role }
+            });
+
+        } catch (error) {
+            return handleError(res, error, "Erro ao atualizar usuário");
+        }
     }
 };
 

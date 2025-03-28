@@ -147,4 +147,59 @@ router.get("/perfil", authMiddleware, (req, res) => {
     res.json({ message: "Acesso autorizado", user: req.user });
 });
 
+
+/**
+ * @swagger
+ * /api/auth/{id}:
+ *   put:
+ *     tags:
+ *       - Autenticação
+ *     summary: Atualiza os dados do usuário autenticado
+ *     description: >
+ *       Permite que um usuário autenticado atualize seus próprios dados, como nome, e-mail e senha. 
+ *       **Somente o próprio usuário pode modificar seus dados.**
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID do usuário a ser atualizado.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nome:
+ *                 type: string
+ *                 description: Novo nome do usuário.
+ *               email:
+ *                 type: string
+ *                 description: Novo e-mail do usuário.
+ *               senha:
+ *                 type: string
+ *                 description: Nova senha do usuário.
+ *     responses:
+ *       200:
+ *         description: Usuário atualizado com sucesso.
+ *       400:
+ *         description: >
+ *           Erro na requisição. Possíveis causas:
+ *           - E-mail já cadastrado.
+ *           - Dados inválidos.
+ *       403:
+ *         description: Acesso negado. O usuário não pode modificar outro usuário.
+ *       404:
+ *         description: Usuário não encontrado.
+ *       500:
+ *         description: Erro interno do servidor.
+ */
+
+router.put("/:id", authMiddleware, UserController.updateUser);
+
+
 module.exports = router;
