@@ -1,6 +1,7 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
 
 // Função para lidar com erros
 const handleError = (res, error, message = "Erro interno do servidor") => {
@@ -141,25 +142,35 @@ const UserController = {
     // Deletar um usuário (Somente Admin pode excluir)
     async deleteUser(req, res) {
         try {
-            const { id } = req.params; // ID do usuário vindo da URL
-
-            // Verifica se o usuário autenticado é um Admin
-            if (req.user.role !== 'Admin') {
+            const { id } = req.params;
+            console.log("Tentando excluir o usuário com ID:", id);
+            console.log("Usuário autenticado:", req.user);
+    
+            // Verifica se o usuário autenticado é ADMIN (ignora maiúsculas/minúsculas)
+            if (req.user.role.toLowerCase() !== "admin") {
                 return res.status(403).json({ message: "Acesso negado. Somente administradores podem excluir usuários." });
             }
-
+                
+            // Verifica se o ID é válido
+            if (!mongoose.Types.ObjectId.isValid(id)) {
+                return res.status(400).json({ message: "ID inválido" });
+            }
+    
             // Busca o usuário no banco
             const user = await User.findById(id);
             if (!user) {
-                return res.status(404).json({ message: "Usuário não encontrado" });
+                return res.status(404).json({ message: "Usuário não encontrado." });
             }
-
-            // Deleta o usuário
-            await user.remove();
-
+    
+            // Exclui o usuário
+            await User.findByIdAndDelete(id);
+            console.log("Usuário excluído com sucesso!");
+    
             return res.status(200).json({ message: "Usuário excluído com sucesso!" });
+    
         } catch (error) {
-            return handleError(res, error, "Erro ao excluir usuário");
+            console.error("Erro ao excluir usuário:", error);
+            return res.status(500).json({ message: "Erro ao excluir usuário", error: error.message });
         }
     }
 
